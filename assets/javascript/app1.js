@@ -1,157 +1,151 @@
-
-// done browser opens with a START Button.
-//done Press the START button to begin
-
-
 $(document).ready(function () {
+  $(".done").hide();
+  $("#question").hide();
+  $("#results").hide();
 
-  //done When the START button is clicked the TIMER starts at 30 seconds
-  // doneQuestion also populate the screen
   $('.start').on('click', function () {
     console.log("click");
     alert('Button clicked. start....');
     $(".start").hide();
-    startGame();
+    timer();
+    $("#question").toggle();
     renderQuestions();
-
+    $(".done").toggle();
   });
 
 
-  //Game Timer 
-  function startGame() {
-    var countDown = 30;
-    var quizTimer = setInterval(function () {
-      countDown--;
-      $('#timer').text(countDown);
-      if (countDown <= 0)
-        clearInterval(quizTimer);
-    }, 1000)
+  var quizTimer;
+  var countDown = 30;
+  function timer() {
+    quizTimer = setInterval(decrement, 1000)
   }
 
-
-  //8 to 10 questions will loaded throught the renderQuestion function
-  //each question will have 4 multiple answers
-  //the user will select the correct/incorrect answer by using a RADIO button
-  //the radio button with the correct answer will have a specific id
-  //create attributes on the radio to specifiy correct answer
-
-  var correct = 0;
-  var inCorrect = 0;
-  var unAnswered = 0;
-
-  var correctAnswer = 0;
-  var questionIndex = 0;
-  var answerIndex = 0;
-
-
+  function decrement() {
+      countDown--;
+      $("#timer").text("Wine Seconds: " + countDown);
+      if (countDown === 0) {
+         endGame();
+      }
+    }
+ 
   var questionList =
     [
       {
-        question: "What is the Answer to Question 1?",
-        answers: ["A", "B", "C", "D"],
-        correct: "A"
+        question: "How many pounds of grapes does it take to crate one bottle of wine?",
+        answers: ["3.1", "2.6", "4.2", "3.5"],
+        correct: "2.6"
       },
       {
-        question: "What is the Answer to Question 2?",
-        answers: ["Apple", "Banana", "Cherry", "Date"],
-        correct: "Banana"
+        question: "About how many calories are in a four ounce glass of red wine?",
+        answers: ["100", "82", "96", "105"],
+        correct: "96"
       },
       {
-        question: "What is the Answer to Question 3?",
-        answers: ["Alice", "Brian", "Clive", "Dan"],
-        correct: "Clive"
+        question: "A typical barrel can hold up to how many gallons of wine?",
+        answers: ["50", "55", "60", "70"],
+        correct: "60"
       },
       {
-        question: "What is the Answer to Question 4?",
-        answers: ["Alamosa", "Burlington", "Centennial", "Denver"],
-        correct: "Denver"
+        question: "What country is home to the longest continuous wine route in the world?",
+        answers: ["North America", "South Africa", "United States", "Europe"],
+        correct: "South Africa"
+      },
+      {
+        question: "How many bottles make a 'case' of wine?",
+        answers: ["10", "12", "14", "16"],
+        correct: "12"
+      },
+      {
+        question: "What small town in Italy has a free wine fountain?",
+        answers: ["Caldari di Ortona", "Sante Maria de Leuca", "Corricella", "Marzamemi"],
+        correct: "Caldari de Ortona"
+      },
+      {
+        question: "Where are the World's Biggest Wine Drinkers located?",
+        answers: ["France", "Italy", "United States", "Vatican City"],
+        correct: "Vatican City"
+      },
+      {
+        question: "How many bottles of wine can you make from one wine barrel?",
+        answers: ["250", "275", "300", "350"],
+        correct: "300"
+      },
+      {
+        question: "How many grapevines are there on ONE acre of land?",
+        answers: ["400", "500", "600", "900"],
+        correct: "400"
       },
     ];
 
 
   function renderQuestions() {
-    // If there are still more questions, render the next one.
     console.log("in renderQuestion")
     for (var i = 0; i < questionList.length; i++) {
       console.log(questionList[i]);
       var questionDiv = $("#question").append("<div id='questionText'>" + questionList[i].question + "</div>");
 
       for (var j = 0; j < questionList[i].answers.length; j++) {
-        // var answerDiv = $("#answer").append("<div id='answerText'>" + questionList[i].answers[j] + "</div>");
-      //  var answerDiv = $("<input type='radio' name='answer[i]'>" + "<label>" + questionList[i].answers[j] + "</label>")
-        var answerDiv = $(`<input type='radio' name=${questionList[i].correct} <label>${questionList[i].answers[j]} </label>`)
-        answerDiv.attr("value", questionList[i].answers[j]).attr("data-correct", questionList[i].correct) ;
+        var answerDiv = $(`<p><input type='radio' name='${questionList[i].correct}' <label>${questionList[i].answers[j]} </label></p>`)
+        answerDiv.attr("value", questionList[i].answers[j]).attr("data-correct", questionList[i].correct);
 
         questionDiv.append(answerDiv);
-        // questionDiv.append(`<div class=${questionList[i].answers[j]} custom-control=${questionList[i].correct}> ${questionList[i].answers[j]} </div>`)
-        // questionDiv.append(`<button class=${questionList[i].answers[j]} data-correct=${questionList[i].correct}> ${questionList[i].answers[j]} </button>`)
-
-        // $("#question").append(questionDiv);
-        // $("#answer").append(answerDiv)
-        // $("$answer").attr("value=quess").addclass("option");
-        //$("option").append("<button value = option1 rightoption="rightanswer" class="option")
       }
     }
   }
-  // renderQuestions();
 
-  //Scenario one: All questions are answered until the time alloted and the USER presses the DONE button
-  //              The question screen is removed and the RESULT SCREEN is provided which includes the:
-  //                  Correct Answers:
-  //                  Incorrect Answers:
-  //                  Unanswered:
+  function gameResults() {
+    var correctAnswer;
+    var userAnswer;
+    var correctCount = 0;
+    var inCorrect = 0;
+    var unAnswered = 0;
 
-  //Scenarion two: The USER does not finish in the time alloted and the RESUlTS SCREEN is produced to include:
-  //                  Correct Answers:
-  //                  Incorrect Answers:
-  //                  Unanswered:
+    for (var i = 0; i < questionList.length; i++) {
+
+      correctAnswer = questionList[i].correct;
+      userAnswer = $(`input[name='${correctAnswer}']:checked`).val();
+      console.log("userAnswer " + userAnswer);
+
+      if (correctAnswer === userAnswer) {
+        correctCount++;
+        console.log("Correct " + correctCount);
+      } else if (userAnswer === undefined) {
+        unAnswered++;
+        console.log("unAnswered " + unAnswered);
+      } else {
+        inCorrect++;
+        console.log("inCorrect " + inCorrect);
+      }
+    }
+
+    var newRows = $("<tr>").append(
+      $("<tr>").text("CHEERS YOU DID IT!!"),
+      $("<tr>").text("Correct Answers: " + correctCount),
+      $("<tr>").text("Incorrect Answers: " + inCorrect),
+      $("<tr>").text("Unanswered: " + unAnswered),
+    )
+    $("#results").append(newRows);
+  }
+
+  function endGame() {
+    clearInterval(quizTimer);
+    $('#timer').hide();
+    $(".done").hide();
+    $("#question").hide();
+    $("#results").toggle();
+    gameResults();
+  }
 
   $('.done').on('click', function () {
     console.log("click");
     alert('Button clicked. done....');
+  
+    $('#timer').hide();
     $(".done").hide();
-    //  renderResults();
-  });
+    $("#question").hide();
+    $("#results").toggle();
+    gameResults();
 
-
-
-
-  //==========================================================================================================
-  // function renderQuiz() {
-  //   timer();
-  //   setInterval(timer, 1000);
-  //   //done -----start timer
-  //   //add all questions to the questions page
-  //   //radio button for the questions
-  //   //done button to stop the game and clear screen and place the scores to the screen.
-  // }
-
-  // function gradeQuiz() {
-  //compare if question answered is correct or NOT
-  //if/else statememnt to review ansered questions if correct or incorrect or unansered
-  //update VARS with scores
-  // }
-
-  //click event for the DONE function - similiar to start button and will call grade quiz
-
-  //???? when timer runs out to call gradeQuiz
-  //var timeleft = 60;
-
-  // function timer() {
-
-  //   // add to the if time = 0 to stop the time
-
-  //   $("#countdown").each(function () {
-  //     clearInterval(timer);
-  //     var count = parseInt($(this).html());
-  //     // console.log(this);
-  //     if (count !== 0) {
-  //       $(this).html(count - 1)
-  //     } else {
-  //       clearInterval()
-  //     }
-  //   });
-  // };
-  // setInterval(timer, 1000);
+  })
 
 })
