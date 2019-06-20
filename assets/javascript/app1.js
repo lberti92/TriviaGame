@@ -4,8 +4,6 @@ $(document).ready(function () {
   $("#results").hide();
 
   $('.start').on('click', function () {
-    console.log("click");
-    alert('Button clicked. start....');
     $(".start").hide();
     timer();
     $("#question").toggle();
@@ -13,21 +11,20 @@ $(document).ready(function () {
     $(".done").toggle();
   });
 
-
   var quizTimer;
-  var countDown = 30;
+  var countDown = 45;
   function timer() {
     quizTimer = setInterval(decrement, 1000)
   }
 
   function decrement() {
-      countDown--;
-      $("#timer").text("Wine Seconds: " + countDown);
-      if (countDown === 0) {
-         endGame();
-      }
+    countDown--;
+    $("#timer").text("Wine Seconds: " + countDown);
+    if (countDown === 0) {
+      endGame();
     }
- 
+  }
+
   var questionList =
     [
       {
@@ -75,8 +72,12 @@ $(document).ready(function () {
         answers: ["400", "500", "600", "900"],
         correct: "400"
       },
+      {
+        question: "How many basic tastes can the tongue perceive?",
+        answers: ["2", "4", "5", "156"],
+        correct: "4"
+      },
     ];
-
 
   function renderQuestions() {
     console.log("in renderQuestion")
@@ -85,7 +86,7 @@ $(document).ready(function () {
       var questionDiv = $("#question").append("<div id='questionText'>" + questionList[i].question + "</div>");
 
       for (var j = 0; j < questionList[i].answers.length; j++) {
-        var answerDiv = $(`<p><input type='radio' name='${questionList[i].correct}' <label>${questionList[i].answers[j]} </label></p>`)
+        var answerDiv = $(`<input type='radio' name='${questionList[i].correct}' <label>${questionList[i].answers[j]} </label>`)
         answerDiv.attr("value", questionList[i].answers[j]).attr("data-correct", questionList[i].correct);
 
         questionDiv.append(answerDiv);
@@ -119,7 +120,7 @@ $(document).ready(function () {
     }
 
     var newRows = $("<tr>").append(
-      $("<tr>").text("CHEERS YOU DID IT!!"),
+      $("<tr>").text("TIME FOR MORE WINE!!"),
       $("<tr>").text("Correct Answers: " + correctCount),
       $("<tr>").text("Incorrect Answers: " + inCorrect),
       $("<tr>").text("Unanswered: " + unAnswered),
@@ -127,25 +128,21 @@ $(document).ready(function () {
     $("#results").append(newRows);
   }
 
+  function hide() {
+    $('#timer').hide();
+    $("#question").hide();
+    $(".done").hide();
+  }
+
   function endGame() {
     clearInterval(quizTimer);
-    $('#timer').hide();
-    $(".done").hide();
-    $("#question").hide();
+    hide();
     $("#results").toggle();
     gameResults();
   }
 
   $('.done').on('click', function () {
-    console.log("click");
-    alert('Button clicked. done....');
-  
-    $('#timer').hide();
-    $(".done").hide();
-    $("#question").hide();
-    $("#results").toggle();
-    gameResults();
-
+    endGame();
   })
 
 })
